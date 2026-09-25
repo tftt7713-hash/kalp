@@ -100,7 +100,7 @@
             align-items: center;
         }
 
-        /* लेफ्ट साइड का स्पेशल बटन */
+        /* लेफ्ट साइड का बटन */
         .left-action-btn {
             background-color: #64748b;
             color: white;
@@ -175,7 +175,7 @@
 
         <!-- बटन्स -->
         <div class="action-buttons">
-            <!-- लेफ्ट साइड वाला बटन (नाम अभी 'View Feature' रखा है) -->
+            <!-- लेफ्ट साइड वाला बटन (यह अब दूसरे पेज पर ले जाएगा) -->
             <button class="left-action-btn" id="leftBtn" onclick="leftButtonAction()">View History</button>
             <!-- मुख्य सेव बटन -->
             <button class="save-btn" onclick="saveBill()">Save Bill</button>
@@ -230,9 +230,9 @@
             document.getElementById('totalAmount').innerText = '₹0.00';
         }
 
-        // लेफ्ट साइड वाले बटन का एक्शन (अभी सिर्फ अलर्ट करेगा)
+        // लेफ्ट साइड वाले बटन का एक्शन (यह अब history.html पेज पर ले जाएगा)
         function leftButtonAction() {
-            alert("इस बटन का काम आप मुझे अगली बार बताएंगे! 👍");
+            window.location.href = "history.html";
         }
     </script>
 
