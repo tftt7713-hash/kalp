@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bill History & Search</title>
+    <title>Quick Bill Counter</title>
     <style>
         * {
             box-sizing: border-box;
@@ -14,244 +14,225 @@
 
         body {
             background-color: #f4f7f6;
-            padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
 
-        .history-card {
+        /* मुख्य बॉक्स कंटेनर */
+        .bill-card {
             background: #ffffff;
             padding: 30px;
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             border: 1px solid #eef2f5;
+            position: relative;
         }
 
         h2 {
             text-align: center;
             color: #333;
             margin-bottom: 25px;
-            font-size: 22px;
+            font-size: 24px;
         }
 
-        .back-btn {
-            background-color: #64748b;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
+        /* इनपुट ग्रुप स्टाइल */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
             font-size: 14px;
-            margin-bottom: 20px;
-            display: inline-block;
-        }
-
-        /* सर्च सेक्शन बॉक्स */
-        .search-section {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .search-section h3 {
-            font-size: 15px;
-            color: #475569;
-            margin-bottom: 10px;
-        }
-
-        .input-row {
-            display: flex;
-            gap: 10px;
         }
 
         input {
-            flex-grow: 1;
-            padding: 10px 12px;
-            border: 2px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 15px;
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
             outline: none;
         }
 
         input:focus {
             border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
 
-        button.search-btn {
+        /* टोटल अमाउंट का बॉक्स */
+        .total-box {
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 25px;
+        }
+
+        .total-label {
+            font-size: 14px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .total-amount {
+            font-size: 28px;
+            font-weight: bold;
+            color: #10b981;
+            margin-top: 5px;
+        }
+
+        /* बटन लेआउट */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* लेफ्ट साइड का स्पेशल बटन */
+        .left-action-btn {
+            background-color: #64748b;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .left-action-btn:hover {
+            background-color: #475569;
+        }
+
+        /* मुख्य सेव बटन */
+        .save-btn {
+            flex-grow: 1;
             background-color: #4f46e5;
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        button.search-btn:hover {
-            background-color: #4338ca;
-        }
-
-        /* रिजल्ट दिखाने के लिए डिज़ाइन (बिना पुराना टेबल स्टाइल के) */
-        .result-container {
-            margin-top: 25px;
-        }
-
-        .result-title {
+            padding: 12px 25px;
+            border-radius: 8px;
             font-size: 16px;
-            font-weight: bold;
-            color: #1e293b;
-            margin-bottom: 12px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 5px;
-        }
-
-        .result-item {
-            background: #fff;
-            border-left: 4px solid #10b981;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 0 8px 8px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            font-size: 15px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .result-item .primary-text {
             font-weight: 600;
-            color: #334155;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
         }
 
-        .result-item .qty-badge {
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .no-data {
-            text-align: center;
-            color: #94a3b8;
-            padding: 20px;
-            font-size: 15px;
+        .save-btn:hover {
+            background-color: #4338ca;
         }
     </style>
 </head>
 <body>
 
-    <div class="history-card">
-        <button class="back-btn" onclick="window.location.href='index.html'">← Back to Billing</button>
-        <h2>🔍 Search & History</h2>
-
-        <!-- 1. कस्टमर के नाम से सर्च करने का बॉक्स -->
-        <div class="search-section">
-            <h3>Search by Customer Name</h3>
-            <div class="input-row">
-                <input type="text" id="custSearchInput" placeholder="e.g. Dinesh Bhai">
-                <button class="search-btn" onclick="searchByCustomer()">Search</button>
-            </div>
+    <div class="bill-card">
+        <h2>🧾 New Bill Entry</h2>
+        
+        <!-- कस्टमर का नाम -->
+        <div class="input-group">
+            <label for="customerName">Customer Name</label>
+            <input type="text" id="customerName" placeholder="Enter customer name">
         </div>
 
-        <!-- 2. आइटम के नाम से सर्च करने का बॉक्स -->
-        <div class="search-section">
-            <h3>Search by Item Name</h3>
-            <div class="input-row">
-                <input type="text" id="itemSearchInput" placeholder="e.g. Dashang Dhoop">
-                <button class="search-btn" onclick="searchByItem()">Search</button>
-            </div>
+        <!-- आइटम का नाम -->
+        <div class="input-group">
+            <label for="itemName">Item Name</label>
+            <input type="text" id="itemName" placeholder="Enter item name">
         </div>
 
-        <!-- परिणाम दिखाने की जगह -->
-        <div class="result-container" id="resultContainer" style="display: none;">
-            <div class="result-title" id="resultHeading">Results</div>
-            <div id="resultsList"></div>
+        <!-- क्वांटिटी -->
+        <div class="input-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" placeholder="0" min="0" oninput="calculateTotal()">
+        </div>
+
+        <!-- प्राइस -->
+        <div class="input-group">
+            <label for="price">Price per Item (₹)</label>
+            <input type="number" id="price" placeholder="0.00" min="0" step="0.01" oninput="calculateTotal()">
+        </div>
+
+        <!-- टोटल अमाउंट बॉक्स -->
+        <div class="total-box">
+            <div class="total-label">Total Amount</div>
+            <div class="total-amount" id="totalAmount">₹0.00</div>
+        </div>
+
+        <!-- बटन्स -->
+        <div class="action-buttons">
+            <!-- लेफ्ट साइड वाला बटन (नाम अभी 'View Feature' रखा है) -->
+            <button class="left-action-btn" id="leftBtn" onclick="leftButtonAction()">View History</button>
+            <!-- मुख्य सेव बटन -->
+            <button class="save-btn" onclick="saveBill()">Save Bill</button>
         </div>
     </div>
 
     <script>
-        // Local Storage से सारा डेटा लोड करना
-        function getBills() {
-            return JSON.parse(localStorage.getItem('allBills')) || [];
+        // ऑटोमैटिक टोटल कैलकुलेट करने के लिए
+        function calculateTotal() {
+            const qty = parseFloat(document.getElementById('quantity').value) || 0;
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            const total = qty * price;
+            document.getElementById('totalAmount').innerText = '₹' + total.toFixed(2);
         }
 
-        // 1. कस्टमर के हिसाब से सर्च करना
-        function searchByCustomer() {
-            const query = document.getElementById('custSearchInput').value.trim().toLowerCase();
-            const allBills = getBills();
-            const listDiv = document.getElementById('resultsList');
-            const container = document.getElementById('resultContainer');
-            
-            if(!query) { alert("कृपया कस्टमर का नाम डालें!"); return; }
-            
-            // आइटम सर्च का इनपुट साफ़ कर दें
-            document.getElementById('itemSearchInput').value = '';
-            
-            // फिल्टर करना (अगर नाम मैच होता है)
-            const filtered = allBills.filter(bill => bill.customerName.toLowerCase().includes(query));
-            
-            container.style.display = "block";
-            document.getElementById('resultHeading').innerText = `Items bought by "${document.getElementById('custSearchInput').value}":`;
-            listDiv.innerHTML = "";
+        // डेटा सेव करने के लिए (Local Storage में)
+        function saveBill() {
+            const name = document.getElementById('customerName').value;
+            const item = document.getElementById('itemName').value;
+            const qty = document.getElementById('quantity').value;
+            const price = document.getElementById('price').value;
+            const total = qty * price;
 
-            if(filtered.length === 0) {
-                listDiv.innerHTML = `<div class="no-data">इस नाम का कोई डेटा नहीं मिला।</div>`;
+            if(!name || !item || !qty || !price) {
+                alert("कृपया सभी डिटेल्स भरें!");
                 return;
             }
 
-            // रिज़ल्ट दिखाना (Item Name और Quantity)
-            filtered.forEach(bill => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'result-item';
-                itemDiv.innerHTML = `
-                    <span class="primary-text">📦 ${bill.itemName}</span>
-                    <span class="qty-badge">Qty: ${bill.quantity}</span>
-                `;
-                listDiv.appendChild(itemDiv);
-            });
+            const billData = {
+                customerName: name,
+                itemName: item,
+                quantity: qty,
+                price: price,
+                totalAmount: total,
+                date: new Date().toLocaleString()
+            };
+
+            // पहले से सेव डेटा निकालना या नया ऐरे बनाना
+            let existingBills = JSON.parse(localStorage.getItem('allBills')) || [];
+            existingBills.push(billData);
+
+            // ब्राउज़र में सेव करना
+            localStorage.setItem('allBills', JSON.stringify(existingBills));
+
+            alert("बिल डेटा सफलतापूर्वक सेव हो गया है!");
+
+            // फॉर्म रीसेट करना
+            document.getElementById('customerName').value = '';
+            document.getElementById('itemName').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('totalAmount').innerText = '₹0.00';
         }
 
-        // 2. आइटम के हिसाब से सर्च करना
-        function searchByItem() {
-            const query = document.getElementById('itemSearchInput').value.trim().toLowerCase();
-            const allBills = getBills();
-            const listDiv = document.getElementById('resultsList');
-            const container = document.getElementById('resultContainer');
-            
-            if(!query) { alert("कृपया आइटम का नाम डालें!"); return; }
-            
-            // कस्टमर सर्च का इनपुट साफ़ कर दें
-            document.getElementById('custSearchInput').value = '';
-
-            // फिल्टर करना (अगर आइटम मैच होता है)
-            const filtered = allBills.filter(bill => bill.itemName.toLowerCase().includes(query));
-            
-            container.style.display = "block";
-            document.getElementById('resultHeading').innerText = `Customers who bought "${document.getElementById('itemSearchInput').value}":`;
-            listDiv.innerHTML = "";
-
-            if(filtered.length === 0) {
-                listDiv.innerHTML = `<div class="no-data">इस आइटम का कोई डेटा नहीं मिला।</div>`;
-                return;
-            }
-
-            // रिज़ल्ट दिखाना (Customer Name और Quantity)
-            filtered.forEach(bill => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'result-item';
-                itemDiv.innerHTML = `
-                    <span class="primary-text">👤 ${bill.customerName}</span>
-                    <span class="qty-badge">Qty: ${bill.quantity}</span>
-                `;
-                listDiv.appendChild(itemDiv);
-            });
+        // लेफ्ट साइड वाले बटन का एक्शन (अभी सिर्फ अलर्ट करेगा)
+        function leftButtonAction() {
+            alert("इस बटन का काम आप मुझे अगली बार बताएंगे! 👍");
         }
     </script>
 
